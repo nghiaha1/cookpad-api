@@ -1,6 +1,7 @@
 package com.project_4.cookpad_api.api;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.project_4.cookpad_api.entity.Product;
 import com.project_4.cookpad_api.entity.User;
 import com.project_4.cookpad_api.entity.dto.CredentialDto;
 import com.project_4.cookpad_api.entity.dto.LoginDto;
@@ -18,18 +19,20 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "api/v1/users")
+@RequestMapping(path = "api/v1/")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class UserApi {
     final UserService userService;
 
-    @RequestMapping(path = "/register", method = RequestMethod.POST)
+    @RequestMapping(path = "register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestBody UserDto userDto) {
         // co the tien hanh validate
         if (userDto.getPassword().length() < 8){
@@ -45,7 +48,7 @@ public class UserApi {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "login", method = RequestMethod.POST)
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto, HttpServletRequest request) {
         if (loginDto.getUsername() == null){
             return ResponseEntity.badRequest().body("username missing");
@@ -64,18 +67,18 @@ public class UserApi {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Login fails");
     }
 
-    @RequestMapping(value = "/token/refresh", method = RequestMethod.GET)
+    @RequestMapping(value = "token/refresh", method = RequestMethod.GET)
     public ResponseEntity<Object> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return ResponseEntity.badRequest().body("require token in header");
         }
         try {
-            String token = authorizationHeader.replace("Bearer", "").trim();
+            String token = authorizationHeader.replace("Thanh", "").trim();
             DecodedJWT decodedJWT = JWTUtil.getDecodedJwt(token);
             String username = decodedJWT.getSubject();
             //load user in the token
-            User user = userService.getUser(username);
+            User user = userService.findByNameActive(username);
             if (user == null) {
                 return ResponseEntity.badRequest().body("Wrong token: Username not exist");
             }
@@ -101,5 +104,34 @@ public class UserApi {
             //show error
             return ResponseEntity.internalServerError().body(ex.getMessage());
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
+    public ResponseEntity<User> findById(@PathVariable Long id){
+        Optional<User> optionalUser = userService.findByIdActive(id);
+        if (!optionalUser.isPresent()){
+            ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(optionalUser.get());
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User updateUser){
+        Optional<User> optionalUser = userService.findByIdActive(id);
+        if (!optionalUser.isPresent()){
+            ResponseEntity.badRequest().build();
+        }
+        User existUser = optionalUser.get();
+
+        existUser.setUsername(updateUser.getUsername());
+//        existUser.setPhone(updateUser.getPhone());
+//        existUser.setEmail(updateUser.getEmail());
+        existUser.setFullName(updateUser.getFullName());
+        existUser.setDetail(updateUser.getDetail());
+        existUser.setAddress(updateUser.getAddress());
+        existUser.setUpdatedAt(LocalDateTime.now());
+//        existUser.setUpdatedBy();
+
+        return ResponseEntity.ok(userService.save(existUser));
     }
 }

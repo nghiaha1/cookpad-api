@@ -9,8 +9,12 @@ public class ApplicationSeeder implements CommandLineRunner {
     @Autowired
     UserSeeder userSeeder;
 
+    @Autowired
+    ProductSeeder productSeeder;
+
     @Override
     public void run(String... args) throws Exception {
         userSeeder.generate();
+        productSeeder.generate();
     }
 }

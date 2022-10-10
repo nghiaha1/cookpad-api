@@ -35,7 +35,7 @@ public class ApiAuthorizationFilter extends OncePerRequestFilter {
 
         // trường hợp client không có request header theo format cần thiết
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Thanh ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Thanh")) {
             // cho qua (không có dấu kiểm duyệt)
             filterChain.doFilter(request, response);
             return;
