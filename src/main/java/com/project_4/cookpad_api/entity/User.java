@@ -2,11 +2,10 @@ package com.project_4.cookpad_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project_4.cookpad_api.entity.base.BaseEntity;
-import com.project_4.cookpad_api.entity.myenum.UserStatus;
+import com.project_4.cookpad_api.entity.myenum.Status;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,21 +21,20 @@ public class User extends BaseEntity {
     private Long id;
     @Column(unique = true)
     private String username;
+    @Column(nullable = false)
     private String password;
     private String fullName;
     private String address;
     private String phone;
-    private Boolean isVip;
-    private Boolean isFamous;
+    private String avatar;
     private int followNumber;
+    @Column(unique = true)
     private String email;
     private String detail;
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     @JsonManagedReference
     private Role role;
     @Enumerated(EnumType.ORDINAL)
-    private UserStatus status;
-
-
+    private Status status;
 }

@@ -1,6 +1,6 @@
 package com.project_4.cookpad_api.repository;
 
-import com.project_4.cookpad_api.entity.User;
+import com.project_4.cookpad_api.entity.Product;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsernameAndStatus(String username, Status status);
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Optional<User> findByIdAndStatus(Long id, Status status);
+    Optional<Product> findByIdAndStatus(Long id, Status status);
 
-    @Override
-    Page<User> findAll(Pageable pageable);
+    Page<Product> findAllByStatus(Status status, Pageable pageable);
+
+    Page<Product> findAll(Pageable pageable);
 }

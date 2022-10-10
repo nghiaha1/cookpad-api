@@ -1,10 +1,7 @@
 package com.project_4.cookpad_api.entity.dto;
 
-import com.project_4.cookpad_api.entity.Role;
-import com.project_4.cookpad_api.entity.myenum.UserStatus;
 import lombok.*;
 
-import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
@@ -23,8 +20,4 @@ public class UserDto {
     private String rePass;
     @NotEmpty(message = "full name missing")
     private String fullName;
-    private String address;
-    private String phone;
-    private String email;
-    private String detail;
 }

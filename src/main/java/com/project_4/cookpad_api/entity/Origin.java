@@ -11,15 +11,11 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "roles")
-public class Role {
+@Table(name = "origins")
+public class Origin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(unique = true)
-    private String name;
-
-    public Role(String name) {
-        this.name = name;
-    }
+    private String country;
 }
