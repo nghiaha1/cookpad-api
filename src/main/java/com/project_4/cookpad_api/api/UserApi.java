@@ -1,28 +1,25 @@
 package com.project_4.cookpad_api.api;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.project_4.cookpad_api.entity.Product;
 import com.project_4.cookpad_api.entity.User;
 import com.project_4.cookpad_api.entity.dto.CredentialDto;
+import com.project_4.cookpad_api.entity.dto.JWTDto;
 import com.project_4.cookpad_api.entity.dto.LoginDto;
-import com.project_4.cookpad_api.entity.dto.UserDto;
+import com.project_4.cookpad_api.entity.dto.RegisterDto;
 import com.project_4.cookpad_api.service.UserService;
 import com.project_4.cookpad_api.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,15 +30,21 @@ public class UserApi {
     final UserService userService;
 
     @RequestMapping(path = "register", method = RequestMethod.POST)
-    public ResponseEntity<?> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
         // co the tien hanh validate
-        if (userDto.getPassword().length() < 8){
+        if(registerDto.getUsername() == null || registerDto.getUsername().length() < 8){
+            return ResponseEntity.badRequest().body("UserName too short");
+        }
+        if(registerDto.getFullName() == null){
+            return ResponseEntity.badRequest().body("Name missing");
+        }
+        if (registerDto.getPassword().length() < 8){
             return ResponseEntity.badRequest().body("password too short");
         }
-        if (!userDto.getPassword().equals(userDto.getRePass())){
+        if (!registerDto.getPassword().equals(registerDto.getRePass())){
             return ResponseEntity.badRequest().body("password not match");
         }
-        User user = userService.register(userDto);
+        User user = userService.register(registerDto);
         if (user == null) {
             return new ResponseEntity<>("Server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -78,7 +81,7 @@ public class UserApi {
             DecodedJWT decodedJWT = JWTUtil.getDecodedJwt(token);
             String username = decodedJWT.getSubject();
             //load user in the token
-            User user = userService.findByNameActive(username);
+            User user = userService.findByNameActive(username).get();
             if (user == null) {
                 return ResponseEntity.badRequest().body("Wrong token: Username not exist");
             }
@@ -106,16 +109,16 @@ public class UserApi {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
+    @RequestMapping(method = RequestMethod.GET, path = "user/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id){
         Optional<User> optionalUser = userService.findByIdActive(id);
         if (!optionalUser.isPresent()){
-            ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(optionalUser.get());
     }
 
-    @RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+    @RequestMapping(method = RequestMethod.PUT, path = "user/{id}")
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User updateUser){
         Optional<User> optionalUser = userService.findByIdActive(id);
         if (!optionalUser.isPresent()){
@@ -133,5 +136,32 @@ public class UserApi {
 //        existUser.setUpdatedBy();
 
         return ResponseEntity.ok(userService.save(existUser));
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "token/{token}")
+    public ResponseEntity<?> decode(@PathVariable String token){
+        DecodedJWT decodedJWT = JWTUtil.getDecodedJwt(token);
+        JWTDto jwtDto = new JWTDto();
+        jwtDto.setUsername(decodedJWT.getSubject());
+        jwtDto.setRole(decodedJWT.getClaim(JWTUtil.ROLE_CLAIM_KEY).asString());
+        return ResponseEntity.ok(jwtDto);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "user/find/{userName}")
+    public ResponseEntity<User> findByUserName(@PathVariable String userName){
+        Optional<User> optionalUser = userService.findByNameActive(userName);
+        if (!optionalUser.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(optionalUser.get());
+    }
+    @RequestMapping(value = "user/profile",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity userPanel(Principal principal){
+        Optional<User> optionalUser = userService.findByNameActive(principal.getName());
+        if (!optionalUser.isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(optionalUser.get());
     }
 }

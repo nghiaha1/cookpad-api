@@ -24,5 +24,4 @@ public class ShoppingCart {
     @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL)
     private Set<CartItem> items;
     private Status status;
-
 }
