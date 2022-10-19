@@ -3,7 +3,7 @@ package com.project_4.cookpad_api.service;
 import com.project_4.cookpad_api.entity.Role;
 import com.project_4.cookpad_api.entity.User;
 import com.project_4.cookpad_api.entity.dto.CredentialDto;
-import com.project_4.cookpad_api.entity.dto.UserDto;
+import com.project_4.cookpad_api.entity.dto.RegisterDto;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import com.project_4.cookpad_api.repository.RoleRepository;
 import com.project_4.cookpad_api.repository.UserRepository;
@@ -42,6 +42,10 @@ public class UserService implements UserDetailsService {
         return passwordEncoder.matches(rawPassword, hashPassword);
     }
 
+    public String encodePassword(String rawPassword){
+        return passwordEncoder.encode(rawPassword);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepository.findByUsernameAndStatus(username, Status.ACTIVE);
@@ -68,12 +72,12 @@ public class UserService implements UserDetailsService {
         return new CredentialDto(accessToken, refreshToken);
     }
 
-    public User register(UserDto userDto){
+    public User register(RegisterDto registerDto){
         Role role = roleRepository.findByName("USER");
         User user = User.builder()
-                .username(userDto.getUsername())
-                .password(passwordEncoder.encode(userDto.getPassword()))
-                .fullName(userDto.getFullName())
+                .username(registerDto.getUsername())
+                .password(passwordEncoder.encode(registerDto.getPassword()))
+                .fullName(registerDto.getFullName())
                 .address(null)
                 .phone(null)
                 .email(null)
@@ -85,14 +89,15 @@ public class UserService implements UserDetailsService {
                 .build();
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
-        user.setCreatedBy(userDto.getFullName());
-        user.setUpdatedBy(userDto.getFullName());
+        user.setCreatedBy(registerDto.getFullName());
+        user.setUpdatedBy(registerDto.getFullName());
         return userRepository.save(user);
 
     }
-    public User findByNameActive(String username) {
-        Optional<User> byUsername = userRepository.findByUsernameAndStatus(username, Status.ACTIVE);
-        return byUsername.orElse(null);
+
+
+    public Optional<User> findByNameActive(String username){
+        return userRepository.findByUsernameAndStatus(username, Status.ACTIVE);
     }
 
     public Optional<User> findByIdActive(Long id){
@@ -113,5 +118,9 @@ public class UserService implements UserDetailsService {
 
     public void deleteById(Long id){
         userRepository.deleteById(id);
+    }
+
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmailAndStatus(email, Status.ACTIVE);
     }
 }

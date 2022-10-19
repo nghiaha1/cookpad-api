@@ -31,15 +31,17 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers(
-                        "/api/v1/users/login",
-                        "/api/v1/users/register",
-                        "/api/v1/users/token/refresh",
+                        "/api/v1/login",
+                        "/api/v1/register",
+                        "/api/v1/token/refresh",
+                        "/api/v1/user/find/**",
+                        "/api/v1/user/**",
                         "/api/v1/posts")
                 .permitAll();
         http.cors().and().csrf().disable();
-        http.authorizeRequests()
-                .antMatchers("/api/v1/users/**", "/api/v1/users/profile")
-                .hasAnyAuthority("USER");
+//        http.authorizeRequests()
+//                .antMatchers("/api/v1/user/**", "/api/v1/user/profile")
+//                .hasAnyAuthority("USER");
         http.authorizeRequests()
                 .antMatchers("/api/v1/admin/**")
                 .hasAnyAuthority(

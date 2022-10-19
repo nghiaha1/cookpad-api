@@ -31,7 +31,7 @@ public class User extends BaseEntity {
     @Column(unique = true)
     private String email;
     private String detail;
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     @JsonManagedReference
     private Role role;

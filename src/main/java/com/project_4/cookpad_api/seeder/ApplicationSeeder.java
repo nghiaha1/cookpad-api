@@ -15,6 +15,6 @@ public class ApplicationSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         userSeeder.generate();
-        productSeeder.generate();
+//        productSeeder.generate();
     }
 }

@@ -78,18 +78,30 @@ public class UserSeeder {
 
         for (int i = 0; i < NUMBER_OF_USER; i++){
             User user = new User();
+            int randomStatus = faker.number().numberBetween(1, 4);
+            if (randomStatus == 1){
+                user.setStatus(Status.ACTIVE);
+            }else if (randomStatus == 2){
+                user.setStatus(Status.DELETED);
+            }else if (randomStatus == 3){
+                user.setStatus(Status.INACTIVE);
+            }
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
-            user.setStatus(Status.ACTIVE);
             user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
             user.setDetail(faker.lorem().sentence());
-            user.setRole(userRole);
+            int randomRole = faker.number().numberBetween(1, 3);
+            if (randomRole == 1){
+                user.setRole(userRole);
+            } else if (randomRole == 2) {
+                user.setRole(adminRole);
+            }
             user.setAvatar(faker.avatar().image());
             user.setUsername(faker.name().username());
             user.setPhone(faker.phoneNumber().cellPhone());
             user.setFullName(faker.name().fullName());
             user.setAddress(faker.address().fullAddress());
-            user.setFollowNumber(0);
+            user.setFollowNumber(faker.number().numberBetween(10, 500));
             user.setEmail(null);
             userList.add(user);
         }

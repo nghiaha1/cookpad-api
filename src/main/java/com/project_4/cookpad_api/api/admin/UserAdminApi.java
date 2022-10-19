@@ -37,6 +37,21 @@ public class UserAdminApi {
         return ResponseEntity.ok(optionalUser.get());
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<?> create(@RequestBody User user) {
+        Optional<User> optionalUser = userService.findByNameActive(user.getUsername());
+        Optional<User> optionalUser1 = userService.findByEmail(user.getEmail());
+        if (optionalUser.isPresent()){
+            return ResponseEntity.badRequest().body("UserName already exist!");
+        }if (optionalUser1.isPresent()){
+            return ResponseEntity.badRequest().body("Email already exist!");
+        }
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        user.setPassword(userService.encodePassword("iamnewuser"));
+        return ResponseEntity.ok(userService.save(user));
+    }
+
     @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         if (!userService.findById(id).isPresent()){
@@ -53,11 +68,9 @@ public class UserAdminApi {
             ResponseEntity.badRequest().build();
         }
         User existUser = optionalUser.get();
-        existUser.setEmail(updateUser.getEmail());
         existUser.setAddress(updateUser.getAddress());
         existUser.setDetail(updateUser.getDetail());
         existUser.setPhone(updateUser.getPhone());
-        existUser.setUsername(updateUser.getUsername());
         existUser.setFullName(updateUser.getFullName());
         existUser.setAvatar(updateUser.getAvatar());
         existUser.setStatus(updateUser.getStatus());
