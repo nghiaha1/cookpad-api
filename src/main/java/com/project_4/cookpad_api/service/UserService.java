@@ -92,7 +92,6 @@ public class UserService implements UserDetailsService {
         user.setCreatedBy(registerDto.getFullName());
         user.setUpdatedBy(registerDto.getFullName());
         return userRepository.save(user);
-
     }
 
 
@@ -123,4 +122,5 @@ public class UserService implements UserDetailsService {
     public Optional<User> findByEmail(String email){
         return userRepository.findByEmailAndStatus(email, Status.ACTIVE);
     }
+
 }

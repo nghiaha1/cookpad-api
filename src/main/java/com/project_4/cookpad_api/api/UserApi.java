@@ -133,6 +133,7 @@ public class UserApi {
         existUser.setDetail(updateUser.getDetail());
         existUser.setAddress(updateUser.getAddress());
         existUser.setUpdatedAt(LocalDateTime.now());
+        existUser.setAvatar(updateUser.getAvatar());
 //        existUser.setUpdatedBy();
 
         return ResponseEntity.ok(userService.save(existUser));
