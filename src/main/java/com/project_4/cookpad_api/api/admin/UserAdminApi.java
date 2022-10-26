@@ -2,6 +2,8 @@ package com.project_4.cookpad_api.api.admin;
 
 import com.project_4.cookpad_api.entity.Product;
 import com.project_4.cookpad_api.entity.User;
+import com.project_4.cookpad_api.entity.myenum.Status;
+import com.project_4.cookpad_api.search.SearchBody;
 import com.project_4.cookpad_api.service.ProductService;
 import com.project_4.cookpad_api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +24,37 @@ public class UserAdminApi {
     @Autowired
     UserService userService;
 
+//    @RequestMapping(method = RequestMethod.GET)
+//    public Page<User> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
+//                              @RequestParam(name = "limit", defaultValue = "10") int limit){
+//        return userService.findAll(page, limit);
+//    }
+
     @RequestMapping(method = RequestMethod.GET)
-    public Page<User> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
-                              @RequestParam(name = "limit", defaultValue = "10") int limit){
-        return userService.findAll(page, limit);
+    public ResponseEntity<?> findAll(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "limit", defaultValue = "10") int limit,
+            @RequestParam(name = "fullName", required = false) String fullName,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "username", required = false) String username,
+            @RequestParam(name = "phone", required = false) String phone,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "start", required = false) String start,
+            @RequestParam(name = "end", required = false) String end
+    ) {
+        SearchBody searchBody = SearchBody.SearchBodyBuilder.aSearchBody()
+                .withPage(page)
+                .withLimit(limit)
+                .withUsername(username)
+                .withPhone(phone)
+                .withFullName(fullName)
+                .withEmail(email)
+                .withSort(sort)
+                .withStart(start)
+                .withEnd(end)
+                .build();
+
+        return ResponseEntity.ok(userService.findAll(searchBody));
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
@@ -46,13 +75,25 @@ public class UserAdminApi {
         }if (optionalUser1.isPresent()){
             return ResponseEntity.badRequest().body("Email already exist!");
         }
+        user.setFollowNumber(0);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         user.setPassword(userService.encodePassword("iamnewuser"));
         return ResponseEntity.ok(userService.save(user));
     }
 
-    @RequestMapping(method = RequestMethod.DELETE,path = "/{id}")
+    @RequestMapping(method = RequestMethod.PUT, path = "delete/{id}")
+    public ResponseEntity<?> softDelete(@PathVariable Long id){
+        Optional<User> optionalUser = userService.findById(id);
+        if (!optionalUser.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
+        User user = optionalUser.get();
+        user.setStatus(Status.INACTIVE);
+        return ResponseEntity.ok(userService.save(user));
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE,path = "delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         if (!userService.findById(id).isPresent()){
             ResponseEntity.badRequest().build();
@@ -71,11 +112,12 @@ public class UserAdminApi {
         existUser.setAddress(updateUser.getAddress());
         existUser.setDetail(updateUser.getDetail());
         existUser.setPhone(updateUser.getPhone());
+        existUser.setEmail(updateUser.getEmail());
         existUser.setFullName(updateUser.getFullName());
         existUser.setAvatar(updateUser.getAvatar());
         existUser.setStatus(updateUser.getStatus());
         existUser.setRole(updateUser.getRole());
-        existUser.setPassword(updateUser.getPassword());
+//        existUser.setPassword(updateUser.getPassword());
         existUser.setUpdatedAt(LocalDateTime.now());
         existUser.setCreatedAt(LocalDateTime.now());
 
