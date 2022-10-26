@@ -39,11 +39,11 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/v1/posts")
                 .permitAll();
         http.cors().and().csrf().disable();
-//        http.authorizeRequests()
-//                .antMatchers("/api/v1/user/**", "/api/v1/user/profile")
-//                .hasAnyAuthority("USER");
         http.authorizeRequests()
-                .antMatchers("/api/v1/admin/**")
+                .antMatchers("/api/v1/user/**", "/api/v1/user/profile")
+                .hasAnyAuthority("USER");
+        http.authorizeRequests()
+                .antMatchers("/api/v1/admin/**", "/api/v1/user/profile")
                 .hasAnyAuthority(
                         "ADMIN");
         http.addFilterBefore(new ApiAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

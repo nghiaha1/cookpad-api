@@ -33,7 +33,6 @@ public class User extends BaseEntity {
     private String detail;
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
-    @JsonManagedReference
     private Role role;
     @Enumerated(EnumType.ORDINAL)
     private Status status;

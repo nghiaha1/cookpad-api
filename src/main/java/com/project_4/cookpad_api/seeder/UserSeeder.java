@@ -82,7 +82,7 @@ public class UserSeeder {
             if (randomStatus == 1){
                 user.setStatus(Status.ACTIVE);
             }else if (randomStatus == 2){
-                user.setStatus(Status.DELETED);
+                user.setStatus(Status.LOCKED);
             }else if (randomStatus == 3){
                 user.setStatus(Status.INACTIVE);
             }
