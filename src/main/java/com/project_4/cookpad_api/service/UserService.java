@@ -99,7 +99,6 @@ public class UserService implements UserDetailsService {
         user.setCreatedBy(registerDto.getFullName());
         user.setUpdatedBy(registerDto.getFullName());
         return userRepository.save(user);
-
     }
 
 
