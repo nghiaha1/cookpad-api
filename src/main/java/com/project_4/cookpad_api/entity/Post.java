@@ -3,6 +3,9 @@ package com.project_4.cookpad_api.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,16 +19,20 @@ public class Post {
     @Id
     @GeneratedValue
     private int id;
-    @ManyToOne
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "cate_id", referencedColumnName = "id", nullable = false)
-    private Category category;
+    private Set<Category> category;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    private String ingredient;
-    private String making;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
+    private List<Ingredient> ingredient = new ArrayList<>();
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
+    private List<Making> making = new ArrayList<>();
     private String name;
     private String description;
     private String thumbnails;
