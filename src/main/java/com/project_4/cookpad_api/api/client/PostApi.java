@@ -1,6 +1,7 @@
 package com.project_4.cookpad_api.api.client;
 
 import com.project_4.cookpad_api.entity.Post;
+import com.project_4.cookpad_api.search.SearchBody;
 import com.project_4.cookpad_api.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,24 @@ public class PostApi {
     PostService postService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Post>> getList() {
-        return ResponseEntity.ok(postService.findAll());
+    public ResponseEntity<?> findAll(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "limit", defaultValue = "10") int limit,
+            @RequestParam(name = "namePost", required = false) String namePost,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "start", required = false) String start,
+            @RequestParam(name = "end", required = false) String end
+    ) {
+        SearchBody searchBody = SearchBody.SearchBodyBuilder.aSearchBody()
+                .withPage(page)
+                .withLimit(limit)
+                .withNamePost(namePost)
+                .withSort(sort)
+                .withStart(start)
+                .withEnd(end)
+                .build();
+
+        return ResponseEntity.ok(postService.findAll(searchBody));
     }
 
     @RequestMapping(method = RequestMethod.POST)

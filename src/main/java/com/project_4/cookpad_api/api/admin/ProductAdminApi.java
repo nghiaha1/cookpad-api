@@ -1,6 +1,7 @@
 package com.project_4.cookpad_api.api.admin;
 
 import com.project_4.cookpad_api.entity.Product;
+import com.project_4.cookpad_api.search.SearchBody;
 import com.project_4.cookpad_api.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,31 @@ public class ProductAdminApi {
     @RequestMapping(method = RequestMethod.GET)
     public Page<Product> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
                                  @RequestParam(name = "limit", defaultValue = "10") int limit){
-        return productService.findAll(page, limit);
+        return productService.findAlls(page, limit);
     }
+
+//    @RequestMapping(method = RequestMethod.GET)
+//    public ResponseEntity<?> findAll(
+//            @RequestParam(name = "page", defaultValue = "1") int page,
+//            @RequestParam(name = "limit", defaultValue = "10") int limit,
+//            @RequestParam(name = "nameProduct", required = false) String nameProduct,
+//            @RequestParam(name = "price", required = false) String price,
+//            @RequestParam(name = "sort", required = false) String sort,
+//            @RequestParam(name = "start", required = false) String start,
+//            @RequestParam(name = "end", required = false) String end
+//    ) {
+//        SearchBody searchBody = SearchBody.SearchBodyBuilder.aSearchBody()
+//                .withPage(page)
+//                .withLimit(limit)
+//                .withNameProduct(nameProduct)
+//                .withPrice(price)
+//                .withSort(sort)
+//                .withStart(start)
+//                .withEnd(end)
+//                .build();
+//
+//        return ResponseEntity.ok(productService.findAll(searchBody));
+//    }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Product> create(@RequestBody Product product) {
