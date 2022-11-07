@@ -43,7 +43,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/user/**", "/api/v1/user/profile")
                 .hasAnyAuthority("USER");
         http.authorizeRequests()
-                .antMatchers("/api/v1/admin/**", "/api/v1/user/profile")
+                .antMatchers("/api/v1/admin/**", "/api/v1/admin/profile")
                 .hasAnyAuthority(
                         "ADMIN");
         http.addFilterBefore(new ApiAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
