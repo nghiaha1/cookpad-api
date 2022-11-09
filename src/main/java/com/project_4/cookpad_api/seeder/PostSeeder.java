@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.project_4.cookpad_api.entity.*;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import com.project_4.cookpad_api.repository.*;
+import com.project_4.cookpad_api.util.NumberUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -73,6 +74,8 @@ public class PostSeeder {
                 }
                 categories.add(category);
             }
+            int randomUserIndex = NumberUtil.getRandomNumber(0, UserSeeder.userList.size() - 1);
+            User user = UserSeeder.userList.get(randomUserIndex);
             post.setMaking(makingList);
             post.setCategory(categories);
             post.setName(faker.food().ingredient());
@@ -81,6 +84,7 @@ public class PostSeeder {
             post.setThumbnails("https://png.pngtree.com/png-clipart/20190117/ourlarge/pngtree-food-cooking-chef-stir-fry-png-image_438767.jpg");
             post.setLikes(faker.random().nextInt(5, 10));
             post.setStatus(Status.ACTIVE);
+            post.setUser(user);
             postList.add(post);
         }
         postRepository.saveAll(postList);
