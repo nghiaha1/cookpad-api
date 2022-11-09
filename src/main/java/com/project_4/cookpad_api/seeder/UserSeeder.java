@@ -6,6 +6,7 @@ import com.project_4.cookpad_api.entity.User;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import com.project_4.cookpad_api.repository.RoleRepository;
 import com.project_4.cookpad_api.repository.UserRepository;
+import com.project_4.cookpad_api.util.LocalDatetimehelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -86,7 +87,7 @@ public class UserSeeder {
             }else if (randomStatus == 3){
                 user.setStatus(Status.INACTIVE);
             }
-            user.setCreatedAt(LocalDateTime.now());
+            user.setCreatedAt(LocalDatetimehelper.generateLocalDate());
             user.setUpdatedAt(LocalDateTime.now());
             user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
             user.setDetail(faker.lorem().sentence());

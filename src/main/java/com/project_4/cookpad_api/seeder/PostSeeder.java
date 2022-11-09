@@ -2,6 +2,7 @@ package com.project_4.cookpad_api.seeder;
 
 import com.github.javafaker.Faker;
 import com.project_4.cookpad_api.entity.*;
+import com.project_4.cookpad_api.entity.myenum.Status;
 import com.project_4.cookpad_api.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,31 +35,21 @@ public class PostSeeder {
     public static List<Post> postList = new ArrayList<>();
 
     public void generate(){
+        Set<String> mapCategory = new HashSet<>();
+        for (int i = 0; i < NUMBER_OF_OBJECT; i++){
+            Category category = new Category();
+            String name;
+            do {
+                name = faker.food().dish();
+            }while (mapCategory.contains(name));
+            category.setName(name);
+            categoryList.add(category);
+            mapCategory.add(category.getName());
+        }
+        categoryRepository.saveAll(categoryList);
+
         for (int i = 0; i < NUMBER_OF_POST; i++){
             Post post = new Post();
-            Set<Category> categories = new HashSet<>();
-            int catePerProduct = faker.number().numberBetween(1, 3);
-            for (int j = 0; j < catePerProduct; j++){
-                int randomCate = faker.number().numberBetween(0, categoryList.size() -1);
-                Category category = categoryList.get(randomCate);
-                if (categories.contains(category)){
-                    continue;
-                }
-                categories.add(category);
-            }
-            post.setCategory(categories);
-
-            Set<User> users = new HashSet<>();
-            int cate = faker.number().numberBetween(1, 10);
-            for (int j = 0; j < cate; j++){
-                int randomCate = faker.number().numberBetween(0, userList.size() -1);
-                User user = userList.get(randomCate);
-                if (categories.contains(user)){
-                    continue;
-                }
-                users.add(user);
-            }
-            post.setCategory(categories);
 
             for (int j = 0; j < NUMBER_OF_OBJECT; j++) {
                 Ingredient ingredient = new Ingredient();
@@ -72,7 +63,24 @@ public class PostSeeder {
                 making.setName(faker.food().ingredient());
                 makingList.add(making);
             }
+            Set<Category> categories = new HashSet<>();
+            int catePerProduct = faker.number().numberBetween(1, 3);
+            for (int j = 0; j < catePerProduct; j++){
+                int randomCate = faker.number().numberBetween(0, categoryList.size() -1);
+                Category category = categoryList.get(randomCate);
+                if (categories.contains(category)){
+                    continue;
+                }
+                categories.add(category);
+            }
             post.setMaking(makingList);
+            post.setCategory(categories);
+            post.setName(faker.food().ingredient());
+            post.setDescription(faker.lorem().sentence());
+            post.setDetail(faker.lorem().sentence());
+            post.setThumbnails("https://png.pngtree.com/png-clipart/20190117/ourlarge/pngtree-food-cooking-chef-stir-fry-png-image_438767.jpg");
+            post.setLikes(faker.random().nextInt(5, 10));
+            post.setStatus(Status.ACTIVE);
             postList.add(post);
         }
         postRepository.saveAll(postList);

@@ -1,5 +1,6 @@
 package com.project_4.cookpad_api.entity;
 
+import com.project_4.cookpad_api.entity.myenum.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,5 +39,5 @@ public class Post {
     private String thumbnails;
     private String detail;
     private int likes;
-    private int status;
+    private Status status;
 }
