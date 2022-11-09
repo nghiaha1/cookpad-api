@@ -14,4 +14,5 @@ import java.util.Optional;
 public interface CartItemRepository extends JpaRepository<Product, Long> {
     @Query(value = "select * from cart_items where shopping_cart_id = ?", nativeQuery = true)
     Page<CartItem> findAllByShoppingCartId(long id, Pageable pageable);
+
 }

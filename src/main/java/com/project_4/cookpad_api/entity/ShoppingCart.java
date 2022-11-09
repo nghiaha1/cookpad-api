@@ -21,7 +21,6 @@ public class ShoppingCart {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<CartItem> items;
-    private Status status;
 }

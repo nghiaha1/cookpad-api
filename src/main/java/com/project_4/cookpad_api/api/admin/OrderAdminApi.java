@@ -35,7 +35,6 @@ public class OrderAdminApi {
                 .withNameUser(nameUser)
                 .withNameProduct(nameProduct)
                 .withEmail(email)
-                .withSort(sort)
                 .withStart(start)
                 .withEnd(end)
                 .withStatus(status)
