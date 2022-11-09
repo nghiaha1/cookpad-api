@@ -1,6 +1,7 @@
 package com.project_4.cookpad_api.api.client;
 
 import com.project_4.cookpad_api.entity.CartItem;
+import com.project_4.cookpad_api.entity.ShoppingCart;
 import com.project_4.cookpad_api.service.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,10 @@ public class ShoppingCartApi {
 
     @RequestMapping(method = RequestMethod.POST, path = "/add")
     public ResponseEntity<?> addShoppingCart(@Param("userId") long userId, @Param("productId") long productId, @Param("quantity") int quantity){
-        shoppingCartService.addToShoppingCart(userId, productId, quantity);
+        ShoppingCart shoppingCart = shoppingCartService.addToShoppingCart(userId, productId, quantity);
+        if (shoppingCart == null){
+            return ResponseEntity.badRequest().body("Add fail");
+        }
         return ResponseEntity.status(HttpStatus.OK).body("Add success") ;
     }
 

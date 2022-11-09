@@ -20,6 +20,7 @@ public class SearchBody {
     private String phone;
     private String nameProduct;
     private String price;
+    private String search;
     private String namePost;
     private String sort;
     private String start;
@@ -37,6 +38,7 @@ public class SearchBody {
             private String email;
             private String phone;
             private String nameProduct;
+            private String search;
             private String price;
             private String namePost;
             private String sort;
@@ -62,6 +64,10 @@ public class SearchBody {
 
             public SearchBodyBuilder withUsername(String username) {
                 this.username = username;
+                return this;
+            }
+            public SearchBodyBuilder withSearchBody(String search) {
+                this.search = search;
                 return this;
             }
 
@@ -125,6 +131,7 @@ public class SearchBody {
                 searchBody.setEmail(email);
                 searchBody.setFullName(fullName);
                 searchBody.setNamePost(namePost);
+                searchBody.setSearch(search);
                 searchBody.setPrice(price);
                 searchBody.setPhone(phone);
                 searchBody.setNameProduct(nameProduct);

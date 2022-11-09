@@ -17,30 +17,35 @@ public class ApplicationSeeder implements CommandLineRunner {
     @Autowired
     ProductRepository productRepository;
     @Autowired
+    OriginRepository originRepository;
+    @Autowired
+    RoleRepository roleRepository;
+    @Autowired
     PostRepository postRepository;
     @Autowired
-    OriginRepository originRepository;
+    PostSeeder postSeeder;
+    boolean seed = false;
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
     OrderRepository orderRepository;
     @Autowired
     OrderSeeder orderSeeder;
-    boolean seed = true;
 
     @Override
     public void run(String... args) throws Exception {
         if (seed) {
-            ;
-            orderRepository.deleteAll();
-            originRepository.deleteAll();
-            categoryRepository.deleteAll();
-            userRepository.deleteAll();
             productRepository.deleteAll();
             postRepository.deleteAll();
+            orderRepository.deleteAll();
+            userRepository.deleteAll();
+            categoryRepository.deleteAll();
+            originRepository.deleteAll();
+            roleRepository.deleteAll();
             userSeeder.generate();
             productSeeder.generate();
             orderSeeder.generate();
+            postSeeder.generate();
         }
     }
 }
