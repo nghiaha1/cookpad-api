@@ -24,11 +24,14 @@ public class SearchBody {
     private String sort;
     private String start;
     private String end;
+    private int status;
 
 
         public static final class SearchBodyBuilder {
             private int page;
             private int limit;
+
+            private int status;
             private String username;
             private String fullName;
             private String email;
@@ -49,6 +52,11 @@ public class SearchBody {
 
             public SearchBodyBuilder withPage(int page) {
                 this.page = page;
+                return this;
+            }
+
+            public SearchBodyBuilder withStatus(int status) {
+                this.status = status;
                 return this;
             }
 
