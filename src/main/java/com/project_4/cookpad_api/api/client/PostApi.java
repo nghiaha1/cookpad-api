@@ -1,21 +1,23 @@
 package com.project_4.cookpad_api.api.client;
 
 import com.project_4.cookpad_api.entity.Post;
-import com.project_4.cookpad_api.entity.User;
+import com.project_4.cookpad_api.entity.UserLikes;
+import com.project_4.cookpad_api.repository.UserLikeRepository;
 import com.project_4.cookpad_api.search.SearchBody;
 import com.project_4.cookpad_api.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "api/v1/post")
 public class PostApi {
     @Autowired
     PostService postService;
+    @Autowired
+    UserLikeRepository userLikeRepository;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> findAll(
@@ -52,11 +54,11 @@ public class PostApi {
     @RequestMapping(method = RequestMethod.PUT, path = "{id}")
     public ResponseEntity<Post> update(@PathVariable Long id, @RequestBody Post post) {
         Optional<Post> optionalPost = postService.findById(id);
+        List<UserLikes> userLikes = userLikeRepository.findAllByPostId(id);
         if (!optionalPost.isPresent()) {
             ResponseEntity.badRequest().build();
         }
         Post updatePost = optionalPost.get();
-        int like = 0;
         // map object
         updatePost.setName(post.getName());
         updatePost.setCategory(post.getCategory());
@@ -66,7 +68,7 @@ public class PostApi {
         updatePost.setDetail(post.getDetail());
         updatePost.setThumbnails(post.getThumbnails());
         updatePost.setUserIdLikes(post.getUserIdLikes());
-        updatePost.setLikes(like++);
+        updatePost.setLikes(userLikes.size() + 1);
         return ResponseEntity.ok(postService.save(updatePost));
     }
 
