@@ -35,6 +35,11 @@ public class Post {
     @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "making_id", referencedColumnName = "id", nullable = false)
     private List<Making> making = new ArrayList<>();
+
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id_likes", referencedColumnName = "id", nullable = false)
+    private Set<User> userIdLikes;
+
     private String name;
     private String thumbnails;
     private String detail;
