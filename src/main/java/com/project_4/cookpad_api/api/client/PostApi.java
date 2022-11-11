@@ -1,14 +1,15 @@
 package com.project_4.cookpad_api.api.client;
 
 import com.project_4.cookpad_api.entity.Post;
+import com.project_4.cookpad_api.entity.User;
 import com.project_4.cookpad_api.search.SearchBody;
 import com.project_4.cookpad_api.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "api/v1/post")
@@ -49,6 +50,7 @@ public class PostApi {
             ResponseEntity.badRequest().build();
         }
         Post updatePost = optionalPost.get();
+        int like = 0;
         // map object
         updatePost.setName(post.getName());
         updatePost.setCategory(post.getCategory());
@@ -58,7 +60,8 @@ public class PostApi {
         updatePost.setDescription(post.getDescription());
         updatePost.setDetail(post.getDetail());
         updatePost.setThumbnails(post.getThumbnails());
-        updatePost.setLikes(post.getLikes());
+        updatePost.setUserIdLikes(post.getUserIdLikes());
+        updatePost.setLikes(like++);
         return ResponseEntity.ok(postService.save(updatePost));
     }
 
