@@ -57,6 +57,14 @@ public class PostSeeder {
                 makingList.add(making);
                 mapMaking.add(making.getName());
             }
+
+            Set<User> mapUserLikes = new HashSet<>();
+            for (int k = 0; k < UserSeeder.userList.size(); k++){
+                int randomUserIndex = faker.number().numberBetween(0, UserSeeder.userList.size());
+                User user = UserSeeder.userList.get(randomUserIndex);
+                mapUserLikes.add(user);
+            }
+
             Post post = new Post();
             post.setIngredient(ingredientList);
             post.setMaking(makingList);
@@ -68,6 +76,7 @@ public class PostSeeder {
             post.setThumbnails("https://picsum.photos/300/200?random="+i);
             post.setLikes(faker.random().nextInt(5, 10));
             post.setStatus(Status.ACTIVE);
+//            post.setUserIdLikes(mapUserLikes);
             post.setUser(user);
             int randomCate = faker.number().numberBetween(0, ProductSeeder.categoryList.size());
             Category category = ProductSeeder.categoryList.get(randomCate);

@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "cate_id", referencedColumnName = "id", nullable = false)
     private Category category;
     private int eatNumber;
@@ -26,19 +27,19 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "origin_id")
     private Origin origin;
-    @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id", referencedColumnName = "id", nullable = false)
     private List<Ingredient> ingredient = new ArrayList<>();
-    @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "making_id", referencedColumnName = "id", nullable = false)
     private List<Making> making = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id_likes", referencedColumnName = "id", nullable = false)
-    private Set<User> userIdLikes;
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_likes_id", referencedColumnName = "id")
+    private List<UserLikes> userIdLikes = new ArrayList<>();
 
     private String name;
     private String thumbnails;
