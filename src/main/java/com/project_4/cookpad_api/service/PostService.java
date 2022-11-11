@@ -3,6 +3,7 @@ package com.project_4.cookpad_api.service;
 import com.project_4.cookpad_api.entity.Post;
 import com.project_4.cookpad_api.entity.User;
 import com.project_4.cookpad_api.repository.PostRepository;
+import com.project_4.cookpad_api.search.PostSpecification;
 import com.project_4.cookpad_api.search.SearchBody;
 import com.project_4.cookpad_api.search.SearchCriteria;
 import com.project_4.cookpad_api.search.UserSpecification;
@@ -39,8 +40,14 @@ public class PostService {
     public Map<String, Object> findAll(SearchBody searchBody){
         Specification specification = Specification.where(null);
 
-        if (searchBody.getNamePost() != null && searchBody.getNamePost().length() > 0 ){
-            specification = specification.and(new UserSpecification(new SearchCriteria("name", EQUALS, searchBody.getNamePost())));
+        if (searchBody.getStatus() > -1){
+            specification = specification.and(new PostSpecification(new SearchCriteria("status", EQUALS, searchBody.getStatus())));
+        }
+        if (searchBody.getUserPostId() > -1){
+            specification = specification.and(new PostSpecification(new SearchCriteria("user", EQUALS, searchBody.getUserPostId())));
+        }
+        if (searchBody.getCateId() > -1){
+            specification = specification.and(new PostSpecification(new SearchCriteria("category", EQUALS, searchBody.getCateId())));
         }
         if (searchBody.getStart() != null && searchBody.getStart().length() > 0){
 //            log.info("check start: " + orderSearchBody.getStart() );
@@ -49,11 +56,11 @@ public class PostService {
             LocalDateTime date = ConvertDateHelper.convertStringToLocalDateTime(searchBody.getStart());
 //            log.info("Check Start" + date);
 //            log.info("check start convert date: " + date );
-            specification = specification.and(new UserSpecification(new SearchCriteria("createdAt", GREATER_THAN_OR_EQUALS,date)));
+            specification = specification.and(new PostSpecification(new SearchCriteria("createdAt", GREATER_THAN_OR_EQUALS,date)));
         }
         if (searchBody.getEnd() != null && searchBody.getEnd().length() > 0){
             LocalDateTime date = ConvertDateHelper.convertStringToLocalDateTime(searchBody.getEnd());
-            specification = specification.and(new UserSpecification(new SearchCriteria("createdAt", LESS_THAN_OR_EQUALS,date)));
+            specification = specification.and(new PostSpecification(new SearchCriteria("createdAt", LESS_THAN_OR_EQUALS,date)));
         }
 
         Sort sort= Sort.by(Sort.Order.asc("id"));
@@ -63,13 +70,13 @@ public class PostService {
             }
         }
         Pageable pageable = PageRequest.of(searchBody.getPage() -1, searchBody.getLimit(),sort );
-        Page<User> pageUser = postRepository.findAll(specification,pageable);
-        List<User> orderList = pageUser.getContent();
+        Page<Post> postPage = postRepository.findAll(specification,pageable);
+        List<Post> orderList = postPage.getContent();
         Map<String, Object> responses = new HashMap<>();
         responses.put("content",orderList);
-        responses.put("currentPage",pageUser.getNumber() + 1);
-        responses.put("totalItems",pageUser.getTotalElements());
-        responses.put("totalPage",pageUser.getTotalPages());
+        responses.put("currentPage",postPage.getNumber() + 1);
+        responses.put("totalItems",postPage.getTotalElements());
+        responses.put("totalPage",postPage.getTotalPages());
         return responses;
     }
 

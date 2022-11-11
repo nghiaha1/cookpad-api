@@ -1,5 +1,6 @@
 package com.project_4.cookpad_api.entity;
 
+import com.project_4.cookpad_api.entity.myenum.Status;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,4 +19,5 @@ public class Origin {
     private long id;
     @Column(unique = true)
     private String country;
+    private Status status;
 }

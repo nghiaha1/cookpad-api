@@ -43,7 +43,6 @@ public class JWTUtil {
     public static String generateToken(String subject, String role, String issuer, int expireAfter) {
         if (role == null || role.length() == 0) {
             return JWT.create()
-//                    .withClaim("userID", id)
                     .withSubject(subject)
                     .withExpiresAt(new Date(System.currentTimeMillis() + expireAfter))
                     .withIssuer(issuer)
@@ -53,10 +52,7 @@ public class JWTUtil {
                 .withSubject(subject)
                 .withExpiresAt(new Date(System.currentTimeMillis() + expireAfter))
                 .withIssuer(issuer)
-                // when role n -> n user
-                //.withClaim(JwtUtil.ROLE_CLAIM_KEY, user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                //when role n -> 1 user
-                .withClaim(JWTUtil.ROLE_CLAIM_KEY, role) //get first role in Authorities
+                .withClaim(JWTUtil.ROLE_CLAIM_KEY, role)
                 .sign(getAlgorithm());
     }
 }
