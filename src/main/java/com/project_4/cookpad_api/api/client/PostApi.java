@@ -21,16 +21,22 @@ public class PostApi {
     public ResponseEntity<?> findAll(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "limit", defaultValue = "10") int limit,
-            @RequestParam(name = "namePost", required = false) String namePost,
             @RequestParam(name = "sort", required = false) String sort,
             @RequestParam(name = "start", required = false) String start,
+            @RequestParam(name = "status", defaultValue = "-1") int status,
+            @RequestParam(name = "cateId", defaultValue = "-1") Long cateId,
+            @RequestParam(name = "originId", defaultValue = "-1") Long originId,
+            @RequestParam(name = "userPostId", defaultValue = "-1") Long userPostId,
             @RequestParam(name = "end", required = false) String end
     ) {
         SearchBody searchBody = SearchBody.SearchBodyBuilder.aSearchBody()
                 .withPage(page)
                 .withLimit(limit)
-                .withNamePost(namePost)
                 .withSort(sort)
+                .withCateId(cateId)
+                .withStatus(status)
+                .withOriginId(originId)
+                .withUserPostId(userPostId)
                 .withStart(start)
                 .withEnd(end)
                 .build();
@@ -57,7 +63,6 @@ public class PostApi {
         updatePost.setUser(post.getUser());
         updatePost.setIngredient(post.getIngredient());
         updatePost.setMaking(post.getMaking());
-        updatePost.setDescription(post.getDescription());
         updatePost.setDetail(post.getDetail());
         updatePost.setThumbnails(post.getThumbnails());
         updatePost.setUserIdLikes(post.getUserIdLikes());

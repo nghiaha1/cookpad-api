@@ -6,6 +6,7 @@ import com.project_4.cookpad_api.entity.myenum.Status;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -31,6 +32,8 @@ public class User extends BaseEntity {
     @Column(unique = true)
     private String email;
     private String detail;
+    private LocalDateTime dob;
+    private String gender;
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;

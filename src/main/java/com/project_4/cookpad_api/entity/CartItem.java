@@ -1,9 +1,9 @@
 package com.project_4.cookpad_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -11,31 +11,19 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "cart_items")
+@Table(name = "cart_item")
 public class CartItem {
     @EmbeddedId
     private CartItemId id;
-    private String productName;
-    private String productImage;
     private int quantity;
-    private BigDecimal unitPrice;
-    private BigDecimal totalPrice;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @MapsId("shopping_cart_id")
-    @JoinColumn(name = "shopping_cart_id")
+    @ManyToOne
+    @MapsId("shoppingCartId")
+    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id")
+    @JsonBackReference
     private ShoppingCart shoppingCart;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @MapsId("product_id")
-    @JoinColumn(name = "product_id")
+    @OneToOne
+    @MapsId("productId")
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
-    public BigDecimal totalPrice(){
-        if (this.quantity > 0){
-            this.totalPrice = this.unitPrice.multiply(new BigDecimal(this.quantity));
-        }else {
-            this.totalPrice = this.unitPrice;
-        }
-        return totalPrice;
-    }
 }

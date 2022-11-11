@@ -26,17 +26,16 @@ public class Product extends BaseEntity {
     private String name;
     private BigDecimal price;
     private int quantity;
-    private String image;
     private String description;
     @Lob
     private String detail; // text
     private String thumbnails;
     @Enumerated(EnumType.ORDINAL)
     private Status status;
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "origin_id")
     private Origin origin;
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "category")
-    private Set<Category> categories;
+    private Category category;
 }

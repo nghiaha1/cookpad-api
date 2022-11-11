@@ -133,6 +133,8 @@ public class UserApi {
         existUser.setDetail(updateUser.getDetail());
         existUser.setAddress(updateUser.getAddress());
         existUser.setUpdatedAt(LocalDateTime.now());
+        existUser.setDob(updateUser.getDob());
+        existUser.setGender(updateUser.getGender());
         existUser.setAvatar(updateUser.getAvatar());
 //        existUser.setUpdatedBy();
 
@@ -151,14 +153,11 @@ public class UserApi {
     @RequestMapping(method = RequestMethod.GET, path = "user/find/{userName}")
     public ResponseEntity<User> findByUserName(@PathVariable String userName){
         Optional<User> optionalUser = userService.findByNameActive(userName);
-        if (!optionalUser.isPresent()){
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok(optionalUser.get());
+        return optionalUser.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
     }
     @RequestMapping(value = "user/profile",method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity userPanel(Principal principal){
+    public ResponseEntity<?> profile(Principal principal){
         Optional<User> optionalUser = userService.findByNameActive(principal.getName());
         if (!optionalUser.isPresent()) {
             return ResponseEntity.badRequest().build();

@@ -2,10 +2,7 @@ package com.project_4.cookpad_api.entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -17,7 +14,7 @@ import javax.persistence.Table;
 @Table(name = "ingredients")
 public class Ingredient {
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
 }

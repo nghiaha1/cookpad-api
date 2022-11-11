@@ -19,28 +19,40 @@ public class SearchBody {
     private String email;
     private String phone;
     private String nameProduct;
-    private String price;
+    private String startPrice;
+    private String endPrice;
     private String search;
-    private String namePost;
     private String sort;
     private String start;
     private String end;
-
+    private int status;
+    private Long cateId;
+    private Long roleId;
+    private String gender;
+    private Long originId;
+    private Long userPostId;
 
         public static final class SearchBodyBuilder {
             private int page;
             private int limit;
+
+            private int status;
             private String username;
             private String fullName;
             private String email;
             private String phone;
             private String nameProduct;
             private String search;
-            private String price;
-            private String namePost;
+            private String startPrice;
+            private String endPrice;
             private String sort;
             private String start;
             private String end;
+            private Long cateId;
+            private Long roleId;
+            private String gender;
+            private Long originId;
+            private Long userPostId;
 
             private SearchBodyBuilder() {
             }
@@ -51,6 +63,18 @@ public class SearchBody {
 
             public SearchBodyBuilder withPage(int page) {
                 this.page = page;
+                return this;
+            }
+            public SearchBodyBuilder withOriginId(Long originId){
+                this.originId = originId;
+                return this;
+            }
+            public SearchBodyBuilder withUserPostId(Long userPostId){
+                this.userPostId = userPostId;
+                return this;
+            }
+            public SearchBodyBuilder withStatus(int status) {
+                this.status = status;
                 return this;
             }
 
@@ -73,13 +97,26 @@ public class SearchBody {
                 return this;
             }
 
-            public SearchBodyBuilder withPrice(String price) {
-                this.price = price;
+            public SearchBodyBuilder withCateId(Long cateId) {
+                this.cateId = cateId;
+                return this;
+            }
+            public SearchBodyBuilder withGender(String gender) {
+                this.gender = gender;
                 return this;
             }
 
-            public SearchBodyBuilder withNamePost(String namePost) {
-                this.namePost = namePost;
+            public SearchBodyBuilder withStartPrice(String startPrice) {
+                this.startPrice = startPrice;
+                return this;
+            }
+
+            public SearchBodyBuilder withEndPrice(String endPrice) {
+                this.endPrice = endPrice;
+                return this;
+            }
+            public SearchBodyBuilder withRoleId(Long roleId) {
+                this.roleId = roleId;
                 return this;
             }
 
@@ -122,14 +159,20 @@ public class SearchBody {
                 searchBody.setUsername(username);
                 searchBody.setEmail(email);
                 searchBody.setFullName(fullName);
-                searchBody.setNamePost(namePost);
                 searchBody.setSearch(search);
-                searchBody.setPrice(price);
+                searchBody.setGender(gender);
+                searchBody.setStatus(status);
+                searchBody.setCateId(cateId);
+                searchBody.setRoleId(roleId);
+                searchBody.setStartPrice(startPrice);
+                searchBody.setEndPrice(endPrice);
                 searchBody.setPhone(phone);
                 searchBody.setNameProduct(nameProduct);
                 searchBody.setSort(sort);
                 searchBody.setStart(start);
                 searchBody.setEnd(end);
+                searchBody.setOriginId(originId);
+                searchBody.setUserPostId(userPostId);
                 return searchBody;
             }
         }

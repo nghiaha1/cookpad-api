@@ -2,11 +2,9 @@ package com.project_4.cookpad_api.entity;
 
 import com.project_4.cookpad_api.entity.myenum.Status;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -18,21 +16,24 @@ import java.util.Set;
 @Table(name = "posts")
 public class Post {
     @Id
-    @GeneratedValue
-    private int id;
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "cate_id", referencedColumnName = "id", nullable = false)
-    private Set<Category> category;
-
+    private Category category;
+    private int eatNumber;
+    private long cookingTime;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
-
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "origin_id")
+    private Origin origin;
+    @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ingredient_id", referencedColumnName = "id", nullable = false)
     private List<Ingredient> ingredient = new ArrayList<>();
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
+    @OneToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "making_id", referencedColumnName = "id", nullable = false)
     private List<Making> making = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
@@ -40,7 +41,6 @@ public class Post {
     private Set<User> userIdLikes;
 
     private String name;
-    private String description;
     private String thumbnails;
     private String detail;
     private int likes;

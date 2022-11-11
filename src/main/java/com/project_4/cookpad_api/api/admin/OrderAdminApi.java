@@ -22,7 +22,6 @@ public class OrderAdminApi {
             @RequestParam(name = "phone", required = false) String phone,
             @RequestParam(name = "nameProduct", required = false) String nameProduct,
             @RequestParam(name = "email", required = false) String email,
-            @RequestParam(name = "sort", required = false) String sort,
             @RequestParam(name = "start", required = false) String start,
             @RequestParam(name = "end", required = false) String end,
             @RequestParam(name = "status", required = false) String status
@@ -35,7 +34,6 @@ public class OrderAdminApi {
                 .withNameUser(nameUser)
                 .withNameProduct(nameProduct)
                 .withEmail(email)
-                .withSort(sort)
                 .withStart(start)
                 .withEnd(end)
                 .withStatus(status)
