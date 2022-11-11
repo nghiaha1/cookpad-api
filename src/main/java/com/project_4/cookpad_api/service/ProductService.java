@@ -4,6 +4,7 @@ import com.project_4.cookpad_api.entity.Product;
 import com.project_4.cookpad_api.entity.User;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import com.project_4.cookpad_api.repository.ProductRepository;
+import com.project_4.cookpad_api.search.ProductSpecification;
 import com.project_4.cookpad_api.search.SearchBody;
 import com.project_4.cookpad_api.search.SearchCriteria;
 import com.project_4.cookpad_api.search.UserSpecification;
@@ -18,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -40,24 +42,22 @@ public class ProductService {
     public Map<String, Object> findAll(SearchBody searchBody){
         Specification specification = Specification.where(null);
 
+        if (searchBody.getCateId() > 0){
+            specification = specification.and(new ProductSpecification(new SearchCriteria("category", EQUALS, searchBody.getCateId())));
+        }
+        if (searchBody.getStatus() > -1){
+            specification = specification.and(new ProductSpecification(new SearchCriteria("status", EQUALS, searchBody.getStatus())));
+        }
         if (searchBody.getNameProduct() != null && searchBody.getNameProduct().length() > 0 ){
-            specification = specification.and(new UserSpecification(new SearchCriteria("name", EQUALS, searchBody.getNameProduct())));
+            specification = specification.and(new ProductSpecification(new SearchCriteria("name", LIKE, "%" + searchBody.getNameProduct() + "%")));
         }
-        if (searchBody.getPrice() != null && searchBody.getPrice().length() > 0 ){
-            specification = specification.and(new UserSpecification(new SearchCriteria("price", EQUALS, searchBody.getPrice())));
+        if (searchBody.getStartPrice() != null && searchBody.getStartPrice().length() > 0){
+            BigDecimal startPrice = new BigDecimal(searchBody.getStartPrice());
+            specification = specification.and(new ProductSpecification(new SearchCriteria("price", GREATER_THAN_OR_EQUALS,startPrice)));
         }
-        if (searchBody.getStart() != null && searchBody.getStart().length() > 0){
-//            log.info("check start: " + orderSearchBody.getStart() );
-//            log.info("Check Start begin" + searchBody.getStart());
-
-            LocalDateTime date = ConvertDateHelper.convertStringToLocalDateTime(searchBody.getStart());
-//            log.info("Check Start" + date);
-//            log.info("check start convert date: " + date );
-            specification = specification.and(new UserSpecification(new SearchCriteria("createdAt", GREATER_THAN_OR_EQUALS,date)));
-        }
-        if (searchBody.getEnd() != null && searchBody.getEnd().length() > 0){
-            LocalDateTime date = ConvertDateHelper.convertStringToLocalDateTime(searchBody.getEnd());
-            specification = specification.and(new UserSpecification(new SearchCriteria("createdAt", LESS_THAN_OR_EQUALS,date)));
+        if (searchBody.getEndPrice() != null && searchBody.getEndPrice().length() > 0){
+            BigDecimal endPrice = new BigDecimal(searchBody.getEndPrice());
+            specification = specification.and(new ProductSpecification(new SearchCriteria("price", LESS_THAN_OR_EQUALS,endPrice)));
         }
 
         Sort sort= Sort.by(Sort.Order.asc("id"));
@@ -67,14 +67,30 @@ public class ProductService {
             }
         }
         Pageable pageable = PageRequest.of(searchBody.getPage() -1, searchBody.getLimit(),sort );
-        Page<User> pageUser = productRepository.findAll(specification,pageable);
-        List<User> orderList = pageUser.getContent();
+        Page<Product> productPage = productRepository.findAll(specification,pageable);
+        List<Product> orderList = productPage.getContent();
         Map<String, Object> responses = new HashMap<>();
         responses.put("content",orderList);
-        responses.put("currentPage",pageUser.getNumber() + 1);
-        responses.put("totalItems",pageUser.getTotalElements());
-        responses.put("totalPage",pageUser.getTotalPages());
+        responses.put("currentPage",productPage.getNumber() + 1);
+        responses.put("totalItems",productPage.getTotalElements());
+        responses.put("totalPage",productPage.getTotalPages());
         return responses;
+    }
+
+    public int totalProduct(){
+        return productRepository.findAll().size();
+    }
+
+    public int totalProductByStatus(int status){
+        Status status1 = Status.ACTIVE;
+        if (status == 1){
+            status1 = Status.ACTIVE;
+        }if (status == 0){
+            status1 = Status.INACTIVE;
+        }if (status == 6){
+            status1 = Status.SOLDOUT;
+        }
+        return productRepository.findAllByStatus(status1).size();
     }
 
     public Product create(Product product) {

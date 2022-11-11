@@ -31,7 +31,7 @@ public class ProductSeeder {
 
     public static final int NUMBER_OF_CATEGORY = 10;
     public static final int NUMBER_OF_PRODUCT = 100;
-    public static final int NUMBER_OF_ORIGIN = 10;
+    public static final int NUMBER_OF_ORIGIN = 226;
 
     public static List<Category> categoryList = new ArrayList<>();
     public static List<Product> productList = new ArrayList<>();
@@ -43,9 +43,10 @@ public class ProductSeeder {
             Origin origin = new Origin();
             String country;
             do {
-                country = faker.address().country();
+                country = faker.nation().nationality();
             }while (mapOrigin.contains(country));
             origin.setCountry(country);
+            origin.setStatus(Status.ACTIVE);
             originList.add(origin);
             mapOrigin.add(origin.getCountry());
         }
@@ -67,26 +68,24 @@ public class ProductSeeder {
         Set<String> mapProduct = new HashSet<>();
         for (int i = 0; i < NUMBER_OF_PRODUCT; i++){
             Product product = new Product();
-            Set<Category> categories = new HashSet<>();
-            int catePerProduct = faker.number().numberBetween(1, 3);
-            for (int j = 0; j < catePerProduct; j++){
-                int randomCate = faker.number().numberBetween(0, categoryList.size() -1);
-                Category category = categoryList.get(randomCate);
-                if (categories.contains(category)){
-                    continue;
-                }
-                categories.add(category);
-            }
-            product.setCategories(categories);
-            int randomOrigin = faker.number().numberBetween(0, originList.size() -1);
+            int randomCate = faker.number().numberBetween(0, categoryList.size());
+            Category category = categoryList.get(randomCate);
+            product.setCategory(category);
+            int randomOrigin = faker.number().numberBetween(0, originList.size());
             Origin origin = originList.get(randomOrigin);
             product.setOrigin(origin);
-            product.setImage(faker.internet().image());
             product.setPrice(new BigDecimal(faker.number().numberBetween(10, 200) * 10000));
-            product.setThumbnails(faker.avatar().image());
+            product.setThumbnails("https://picsum.photos/300/200?random="+i);
             product.setDetail(faker.lorem().sentence());
             product.setDescription(faker.lorem().sentence());
-            product.setStatus(Status.ACTIVE);
+            int randomStatus = faker.number().numberBetween(1, 4);
+            if (randomStatus == 1){
+                product.setStatus(Status.ACTIVE);
+            }else if (randomStatus == 2){
+                product.setStatus(Status.SOLDOUT);
+            }else if (randomStatus == 3){
+                product.setStatus(Status.INACTIVE);
+            }
             product.setQuantity(faker.number().numberBetween(10, 100));
             String name;
             do {

@@ -133,6 +133,8 @@ public class UserApi {
         existUser.setDetail(updateUser.getDetail());
         existUser.setAddress(updateUser.getAddress());
         existUser.setUpdatedAt(LocalDateTime.now());
+        existUser.setDob(updateUser.getDob());
+        existUser.setGender(updateUser.getGender());
         existUser.setAvatar(updateUser.getAvatar());
 //        existUser.setUpdatedBy();
 

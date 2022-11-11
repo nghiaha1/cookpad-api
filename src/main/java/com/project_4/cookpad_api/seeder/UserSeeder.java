@@ -59,6 +59,23 @@ public class UserSeeder {
                 .email("buithanh2810021@gmail.com")
                 .detail("cook for fun")
                 .role(adminRole)
+                .avatar("https://picsum.photos/200/200?random=3")
+                .status(Status.ACTIVE)
+                .build());
+
+        userList.add(User
+                .builder()
+                .username("admin2")
+                .password(passwordEncoder.encode("admin2"))
+                .fullName("Bui Huu Thanh")
+                .address("Ha Noi")
+                .phone("0979341090")
+                .email("buithanh2810023@gmail.com")
+                .detail("cook for fun")
+                .dob(LocalDateTime.of(2002, 10, 28, 0 ,0))
+                .role(adminRole)
+                .gender("Male")
+                .avatar("https://picsum.photos/200/200?random=3")
                 .status(Status.ACTIVE)
                 .build());
 
@@ -73,9 +90,24 @@ public class UserSeeder {
                 .email("buithanh2810022@gmail.com")
                 .detail("cook for fun")
                 .role(userRole)
+                .avatar("https://picsum.photos/200/200?random=3")
                 .status(Status.ACTIVE)
                 .build());
 
+        userList.add(User
+                .builder()
+                .username("nghiaha")
+                .password(passwordEncoder.encode("123"))
+                .fullName("Ha Nghia")
+                .address("Ha Noi")
+                .phone("0123456789")
+                .followNumber((int)faker.number().randomNumber())
+                .email("nghiaha@gmail.com")
+                .detail("cook for life")
+                .role(adminRole)
+                .avatar("https://picsum.photos/200/200?random=3")
+                .status(Status.ACTIVE)
+                .build());
 
         for (int i = 0; i < NUMBER_OF_USER; i++){
             User user = new User();
@@ -97,13 +129,13 @@ public class UserSeeder {
             } else if (randomRole == 2) {
                 user.setRole(adminRole);
             }
-            user.setAvatar(faker.avatar().image());
+            user.setAvatar("https://picsum.photos/200/200?random="+i);
             user.setUsername(faker.name().username());
             user.setPhone(faker.phoneNumber().cellPhone());
             user.setFullName(faker.name().fullName());
             user.setAddress(faker.address().fullAddress());
             user.setFollowNumber(faker.number().numberBetween(10, 500));
-            user.setEmail(null);
+            user.setEmail(faker.lorem().characters(20) + "@gmail.com");
             userList.add(user);
         }
         userRepository.saveAll(userList);

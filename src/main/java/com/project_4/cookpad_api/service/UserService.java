@@ -117,17 +117,26 @@ public class UserService implements UserDetailsService {
     public Map<String, Object> findAll(SearchBody searchBody){
         Specification specification = Specification.where(null);
 
+        if (searchBody.getGender() != null && searchBody.getGender().length() > 0 ){
+            specification = specification.and(new UserSpecification(new SearchCriteria("gender", EQUALS, searchBody.getGender())));
+        }
+        if (searchBody.getRoleId() > 0){
+            specification = specification.and(new UserSpecification(new SearchCriteria("role", EQUALS, searchBody.getRoleId())));
+        }
+        if (searchBody.getStatus() > -1){
+            specification = specification.and(new UserSpecification(new SearchCriteria("status", EQUALS, searchBody.getStatus())));
+        }
         if (searchBody.getUsername() != null && searchBody.getUsername().length() > 0 ){
-            specification = specification.and(new UserSpecification(new SearchCriteria("username", EQUALS, searchBody.getUsername())));
+            specification = specification.and(new UserSpecification(new SearchCriteria("username", LIKE, "%" + searchBody.getUsername() + "%")));
         }
         if (searchBody.getFullName() != null && searchBody.getFullName().length() > 0 ){
-            specification = specification.and(new UserSpecification(new SearchCriteria("fullName", EQUALS, searchBody.getFullName())));
+            specification = specification.and(new UserSpecification(new SearchCriteria("fullName", LIKE, "%" + searchBody.getFullName() + "%")));
         }
         if (searchBody.getEmail() != null && searchBody.getEmail().length() > 0 ){
-            specification = specification.and(new UserSpecification(new SearchCriteria("email", EQUALS, searchBody.getEmail())));
+            specification = specification.and(new UserSpecification(new SearchCriteria("email", LIKE, "%" + searchBody.getEmail() + "%")));
         }
         if (searchBody.getPhone() != null && searchBody.getPhone().length() > 0){
-            specification = specification.and(new UserSpecification(new SearchCriteria("phone",EQUALS, searchBody.getPhone())));
+            specification = specification.and(new UserSpecification(new SearchCriteria("phone",LIKE, "%" + searchBody.getPhone() + "%")));
         }
         if (searchBody.getStart() != null && searchBody.getStart().length() > 0){
 //            log.info("check start: " + orderSearchBody.getStart() );
@@ -172,8 +181,34 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    public Optional<User> findByEmail(String email){
-        return userRepository.findByEmailAndStatus(email, Status.ACTIVE);
+    public Optional<User> findByUsername(String username){
+        return userRepository.findByUsername(username);
     }
 
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+    public Optional<User> findByPhone(String phone){
+        return userRepository.findByPhone(phone);
+    }
+
+    public int totalUser(){
+        return userRepository.findAll().size();
+    }
+
+    public int totalUserByStatus(int status){
+        Status status1 = Status.ACTIVE;
+        if (status == 0){
+            status1 = Status.INACTIVE;
+        }if (status == 6){
+            status1 = Status.UNDEFINED;
+        }
+        return userRepository.findAllByStatus(status1).size();
+    }
+
+    public int totalUserByRole(Long roleId){
+        Optional<Role> role = roleRepository.findById(roleId);
+        return userRepository.findAllByRole(role.get()).size();
+    }
 }
