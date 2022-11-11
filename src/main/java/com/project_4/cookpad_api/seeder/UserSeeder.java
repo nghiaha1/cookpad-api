@@ -38,11 +38,13 @@ public class UserSeeder {
         Role adminRole = roleRepository.findByName("ADMIN");
         Role userRole = roleRepository.findByName("USER");
         if (adminRole == null){
-            adminRole = new Role("ADMIN");
+            adminRole = new Role();
+            adminRole.setName("ADMIN");
             roleList.add(adminRole);
         }
         if (userRole == null){
-            userRole = new Role("USER");
+            userRole = new Role();
+            userRole.setName("USER");
             roleList.add(userRole);
         }
         if (roleList != null){

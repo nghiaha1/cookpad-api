@@ -110,10 +110,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByIdAndStatus(id, Status.ACTIVE);
     }
 
-//    public Page<User> findAll(int page, int limit){
-//        return userRepository.findAll(PageRequest.of(page, limit));
-//    }
-
     public Map<String, Object> findAll(SearchBody searchBody){
         Specification specification = Specification.where(null);
 

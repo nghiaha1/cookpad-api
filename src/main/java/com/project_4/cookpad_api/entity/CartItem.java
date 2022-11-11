@@ -1,9 +1,9 @@
 package com.project_4.cookpad_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -11,14 +11,19 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "cart_items")
+@Table(name = "cart_item")
 public class CartItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @EmbeddedId
+    private CartItemId id;
     private int quantity;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_id")
+    @ManyToOne
+    @MapsId("shoppingCartId")
+    @JoinColumn(name = "shoppingCart_id", referencedColumnName = "id")
+    @JsonBackReference
+    private ShoppingCart shoppingCart;
+    @OneToOne
+    @MapsId("productId")
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
 }

@@ -34,18 +34,15 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/v1/login",
                         "/api/v1/register",
                         "/api/v1/token/refresh",
-                        "/api/v1/user/find/**",
-                        "/api/v1/user/**",
                         "/api/v1/posts")
-                .permitAll();
+                        .permitAll();
         http.cors().and().csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/api/v1/user/**", "/api/v1/user/profile")
-                .hasAnyAuthority("USER");
+                .antMatchers("/api/v1/user/**")
+                .hasAnyAuthority("USER", "ADMIN");
         http.authorizeRequests()
-                .antMatchers("/api/v1/admin/**", "/api/v1/user/**")
-                .hasAnyAuthority(
-                        "ADMIN");
+                .antMatchers("/api/v1/admin/**")
+                .hasAnyAuthority("ADMIN");
         http.addFilterBefore(new ApiAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
     @Bean

@@ -21,7 +21,7 @@ import java.util.*;
 import static java.util.Arrays.stream;
 
 public class ApiAuthorizationFilter extends OncePerRequestFilter {
-    private static final String[] IGNORE_PATH = {"/api/v1/login", "/api/v1/register", "/api/v1/token/refresh", "/api/v1/user/**", "/api/v1/user/find"};
+    private static final String[] IGNORE_PATH = {"/api/v1/login", "/api/v1/register", "/api/v1/token/refresh"};
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -35,7 +35,7 @@ public class ApiAuthorizationFilter extends OncePerRequestFilter {
 
         // trường hợp client không có request header theo format cần thiết
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer")) {
             // cho qua (không có dấu kiểm duyệt)
             filterChain.doFilter(request, response);
             return;
@@ -44,7 +44,7 @@ public class ApiAuthorizationFilter extends OncePerRequestFilter {
         //lấy token từ request header
         try {
             // remove chữ Bearer
-            String token = authorizationHeader.replace("Bearer", "").trim();
+            String token = authorizationHeader.replace("Bearer ", "").trim();
 
             // dịch ngược JWT
             DecodedJWT decodedJWT = JWTUtil.getDecodedJwt(token);

@@ -1,9 +1,6 @@
 package com.project_4.cookpad_api.service;
 
-import com.project_4.cookpad_api.entity.CartItem;
-import com.project_4.cookpad_api.entity.Product;
-import com.project_4.cookpad_api.entity.ShoppingCart;
-import com.project_4.cookpad_api.entity.User;
+import com.project_4.cookpad_api.entity.*;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import com.project_4.cookpad_api.repository.CartItemRepository;
 import com.project_4.cookpad_api.repository.ProductRepository;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -38,16 +36,12 @@ public class ShoppingCartService {
     @Autowired
     UserRepository userRepository;
 
-    public ShoppingCart addToShoppingCart(Long userId, Long productId, int quantity){
+    public ShoppingCart addToShoppingCart(User user, Long productId, int quantity){
         Optional<Product> optionalProduct = productRepository.findByIdAndStatus(productId, Status.ACTIVE);
         if (!optionalProduct.isPresent()){
             return null;
         }
-        Optional<User> optionalUser = userRepository.findByIdAndStatus(userId, Status.ACTIVE);
-        if (!optionalUser.isPresent()){
-            return null;
-        }
-        Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository.findByUserId(userId);
+        Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository.findByUserId(user.getId());
         if (optionalShoppingCart.isPresent()){
             Set<CartItem> cartItems = optionalShoppingCart.get().getItems();
             boolean exits = false;
@@ -55,46 +49,61 @@ public class ShoppingCartService {
             ) {
                 if (item.getProduct().getId().equals(productId)){
                     exits = true;
-                    item.getProduct().setQuantity(item.getQuantity() + quantity);
+                    item.setQuantity(item.getQuantity() + quantity);
+                    if (item.getQuantity() > optionalProduct.get().getQuantity()){
+                        item.setQuantity(optionalProduct.get().getQuantity());
+                    }
                 }
             }
             if (!exits){
                 CartItem item = new CartItem();
                 item.setProduct(optionalProduct.get());
                 item.setQuantity(quantity);
+                item.setShoppingCart(optionalShoppingCart.get());
                 cartItems.add(item);
             }
             optionalShoppingCart.get().setItems(cartItems);
+            return shoppingCartRepository.save(optionalShoppingCart.get());
         } else {
             ShoppingCart shoppingCart = new ShoppingCart();
             Set<CartItem> cartItems = new HashSet<>();
             CartItem cartItem = new CartItem();
             cartItem.setProduct(optionalProduct.get());
+            if (quantity > optionalProduct.get().getQuantity()){
+                quantity = optionalProduct.get().getQuantity();
+            }
             cartItem.setQuantity(quantity);
             cartItems.add(cartItem);
+            CartItemId cartItemId = new CartItemId(shoppingCart.getId(), productId);
+            cartItem.setId(cartItemId);
+            cartItem.setShoppingCart(shoppingCart);
             shoppingCart.setItems(cartItems);
-            shoppingCart.setUser(optionalUser.get());
+            shoppingCart.setUser(user);
             return shoppingCartRepository.save(shoppingCart);
         }
-        return shoppingCartRepository.save(optionalShoppingCart.get());
     }
 
-    public Page<CartItem> getAllCart(Long userId, int page, int limit){
+    public List<CartItem> getAllCart(Long userId){
         Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findByUserId(userId);
         if (!shoppingCart.isPresent()){
             return null;
         }
         Long shoppingCartId = shoppingCart.get().getId();
-        return cartItemRepository.findAllByShoppingCartId(shoppingCartId, PageRequest.of(page, limit));
+        List<CartItem> cartItemList = cartItemRepository.findAllByShoppingCartId(shoppingCartId);
+        return cartItemList;
     }
 
 
-    public ResponseEntity<?> deleteCartItem(Long shoppingCartId, Long productId){
+    public ShoppingCart deleteCartItem(Long shoppingCartId, Long productId){
         Optional<Product> optionalProduct = productRepository.findByIdAndStatus(productId, Status.ACTIVE);
         if (!optionalProduct.isPresent()){
             return null;
         }
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(shoppingCartId).get();
+        Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository.findById(shoppingCartId);
+        if (!optionalShoppingCart.isPresent()){
+            return null;
+        }
+        ShoppingCart shoppingCart = optionalShoppingCart.get();
         Set<CartItem> cartItems = shoppingCart.getItems();
         boolean exits = false;
         for (CartItem item:cartItems
@@ -102,14 +111,16 @@ public class ShoppingCartService {
             if (item.getProduct().getId().equals(productId)){
                 exits = true;
                 cartItems.remove(item);
+                CartItemId cartItemId = new CartItemId(shoppingCartId, productId);
+                cartItemRepository.deleteById(cartItemId);
             }
         }
         if (!exits){
-            return ResponseEntity.badRequest().body("Product not found");
+            return null;
         }
         shoppingCart.setItems(cartItems);
         shoppingCartRepository.save(shoppingCart);
-        return ResponseEntity.ok(shoppingCart);
+        return shoppingCart;
     }
 
     public ShoppingCart updateQuantity(Long shoppingCartId, Long productId, int quantity){
@@ -117,13 +128,18 @@ public class ShoppingCartService {
         if (!optionalProduct.isPresent()){
             return null;
         }
-        ShoppingCart shoppingCart = shoppingCartRepository.findById(shoppingCartId).get();
+        Optional<ShoppingCart> optionalShoppingCart = shoppingCartRepository.findById(shoppingCartId);
+        if (!optionalShoppingCart.isPresent()){
+            return null;
+        }
+        ShoppingCart shoppingCart = optionalShoppingCart.get();
         Set<CartItem> cartItems = shoppingCart.getItems();
         for (CartItem item:cartItems
         ) {
             if (item.getProduct().getId().equals(productId)){
                 item.setQuantity(quantity);
                 shoppingCart.setItems(cartItems);
+                cartItemRepository.save(item);
             }
         }
         return shoppingCartRepository.save(shoppingCart);

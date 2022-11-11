@@ -31,8 +31,8 @@ public class ProductSeeder {
 
     public static final int NUMBER_OF_CATEGORY = 10;
     public static final int NUMBER_OF_PRODUCT = 100;
-    public static final int NUMBER_OF_ORIGIN = 226;
-
+//    public static final int NUMBER_OF_ORIGIN = 226;
+    public static final int NUMBER_OF_ORIGIN = 100;
     public static List<Category> categoryList = new ArrayList<>();
     public static List<Product> productList = new ArrayList<>();
     public static List<Origin> originList = new ArrayList<>();
