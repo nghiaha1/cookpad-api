@@ -1,14 +1,11 @@
 package com.project_4.cookpad_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project_4.cookpad_api.entity.base.BaseEntity;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -30,12 +27,15 @@ public class Product extends BaseEntity {
     @Lob
     private String detail; // text
     private String thumbnails;
+
     @Enumerated(EnumType.ORDINAL)
     private Status status;
+
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "origin_id")
     private Origin origin;
-    @ManyToOne(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "category")
-    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "product_cate")
+    private ProductCategory productCategory;
 }

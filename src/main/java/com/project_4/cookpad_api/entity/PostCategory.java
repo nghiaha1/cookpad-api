@@ -12,18 +12,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "origins")
-public class Origin implements Comparable<Origin>{
+@Table(name = "post_categories")
+public class PostCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String code;
     @Column(unique = true)
-    private String country;
+    private String name;
     private Status status;
-
-    @Override
-    public int compareTo(Origin o) {
-        return this.country.compareTo(o.country);
-    }
 }

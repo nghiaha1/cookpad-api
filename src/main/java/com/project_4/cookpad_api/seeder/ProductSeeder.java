@@ -1,11 +1,11 @@
 package com.project_4.cookpad_api.seeder;
 
 import com.github.javafaker.Faker;
-import com.project_4.cookpad_api.entity.Category;
+import com.project_4.cookpad_api.entity.ProductCategory;
 import com.project_4.cookpad_api.entity.Origin;
 import com.project_4.cookpad_api.entity.Product;
 import com.project_4.cookpad_api.entity.myenum.Status;
-import com.project_4.cookpad_api.repository.CategoryRepository;
+import com.project_4.cookpad_api.repository.ProductCategoryRepository;
 import com.project_4.cookpad_api.repository.OriginRepository;
 import com.project_4.cookpad_api.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class ProductSeeder {
     ProductRepository productRepository;
 
     @Autowired
-    CategoryRepository categoryRepository;
+    ProductCategoryRepository productCategoryRepository;
 
     @Autowired
     OriginRepository originRepository;
@@ -31,66 +31,65 @@ public class ProductSeeder {
 
     public static final int NUMBER_OF_CATEGORY = 10;
     public static final int NUMBER_OF_PRODUCT = 100;
-//    public static final int NUMBER_OF_ORIGIN = 226;
+    //    public static final int NUMBER_OF_ORIGIN = 226;
     public static final int NUMBER_OF_ORIGIN = 100;
-    public static List<Category> categoryList = new ArrayList<>();
+    public static List<ProductCategory> productCategoryList = new ArrayList<>();
     public static List<Product> productList = new ArrayList<>();
-    public static List<Origin> originList = new ArrayList<>();
+    public static String[] countryCodes = Locale.getISOCountries();
+    public static List<Origin> originList = new ArrayList<Origin>(countryCodes.length);
 
-    public void generate(){
-        Set<String> mapOrigin = new HashSet<>();
-        for (int i = 0; i < NUMBER_OF_ORIGIN; i++){
-            Origin origin = new Origin();
-            String country;
-            do {
-                country = faker.nation().nationality();
-            }while (mapOrigin.contains(country));
-            origin.setCountry(country);
-            origin.setStatus(Status.ACTIVE);
-            originList.add(origin);
-            mapOrigin.add(origin.getCountry());
+    public void generate() {
+        countryCodes = Locale.getISOCountries();
+        originList = new ArrayList<Origin>(countryCodes.length);
+        for (String item : countryCodes) {
+            originList.add(Origin.builder()
+                            .code(item.toUpperCase())
+                            .country(new Locale("", item).getDisplayCountry())
+                            .status(Status.ACTIVE)
+                    .build());
         }
+        Collections.sort(originList);
         originRepository.saveAll(originList);
 
         Set<String> mapCategory = new HashSet<>();
-        for (int i = 0; i < NUMBER_OF_CATEGORY; i++){
-            Category category = new Category();
+        for (int i = 0; i < NUMBER_OF_CATEGORY; i++) {
+            ProductCategory category = new ProductCategory();
             String name;
             do {
-                name = faker.food().dish();
-            }while (mapCategory.contains(name));
+                name = faker.commerce().productName();
+            } while (mapCategory.contains(name));
             category.setName(name);
-            categoryList.add(category);
+            productCategoryList.add(category);
             mapCategory.add(category.getName());
         }
-        categoryRepository.saveAll(categoryList);
+        productCategoryRepository.saveAll(productCategoryList);
 
         Set<String> mapProduct = new HashSet<>();
-        for (int i = 0; i < NUMBER_OF_PRODUCT; i++){
+        for (int i = 0; i < NUMBER_OF_PRODUCT; i++) {
             Product product = new Product();
-            int randomCate = faker.number().numberBetween(0, categoryList.size());
-            Category category = categoryList.get(randomCate);
-            product.setCategory(category);
+            int randomCate = faker.number().numberBetween(0, productCategoryList.size());
+//            Category category = categoryList.get(randomCate);
+//            product.setCategory(category);
             int randomOrigin = faker.number().numberBetween(0, originList.size());
             Origin origin = originList.get(randomOrigin);
             product.setOrigin(origin);
-            product.setPrice(new BigDecimal(faker.number().numberBetween(10, 200) * 10000));
-            product.setThumbnails("https://picsum.photos/300/200?random="+i);
+            product.setPrice(new BigDecimal(faker.commerce().price()));
+            product.setThumbnails("https://picsum.photos/300/200?random=" + i);
             product.setDetail(faker.lorem().sentence());
             product.setDescription(faker.lorem().sentence());
             int randomStatus = faker.number().numberBetween(1, 4);
-            if (randomStatus == 1){
+            if (randomStatus == 1) {
                 product.setStatus(Status.ACTIVE);
-            }else if (randomStatus == 2){
+            } else if (randomStatus == 2) {
                 product.setStatus(Status.SOLDOUT);
-            }else if (randomStatus == 3){
+            } else if (randomStatus == 3) {
                 product.setStatus(Status.INACTIVE);
             }
             product.setQuantity(faker.number().numberBetween(10, 100));
             String name;
             do {
                 name = faker.name().title();
-            }while (mapProduct.contains(name));
+            } while (mapProduct.contains(name));
             product.setName(name);
             mapProduct.add(name);
             product.setUpdatedAt(LocalDateTime.now());

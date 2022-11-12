@@ -1,17 +1,15 @@
 package com.project_4.cookpad_api.api.admin;
 
-import com.project_4.cookpad_api.entity.Category;
+import com.project_4.cookpad_api.entity.ProductCategory;
 import com.project_4.cookpad_api.entity.Origin;
 import com.project_4.cookpad_api.entity.Product;
 import com.project_4.cookpad_api.entity.myenum.Status;
-import com.project_4.cookpad_api.repository.OriginRepository;
 import com.project_4.cookpad_api.search.SearchBody;
 import com.project_4.cookpad_api.service.CategoryService;
 import com.project_4.cookpad_api.service.OriginService;
 import com.project_4.cookpad_api.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,8 +64,8 @@ public class ProductAdminApi {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Product> create(@RequestBody Product product) {
-        Optional<Category> optionalCategory = categoryService.findById(product.getCategory().getId());
-        product.setCategory(optionalCategory.get());
+        Optional<ProductCategory> optionalCategory = categoryService.findById(product.getProductCategory().getId());
+        product.setProductCategory(optionalCategory.get());
         return ResponseEntity.ok(productService.create(product));
     }
 
@@ -107,10 +105,10 @@ public class ProductAdminApi {
         }
         Product existProduct = optionalProduct.get();
 
-        Optional<Category> optionalCategory = categoryService.findById(updateProduct.getCategory().getId());
+        Optional<ProductCategory> optionalCategory = categoryService.findById(updateProduct.getProductCategory().getId());
         Optional<Origin> optionalOrigin = originService.findById(updateProduct.getOrigin().getId());
         existProduct.setStatus(updateProduct.getStatus());
-        existProduct.setCategory(optionalCategory.get());
+        existProduct.setProductCategory(optionalCategory.get());
         existProduct.setDescription(updateProduct.getDescription());
         existProduct.setDetail(updateProduct.getDetail());
         existProduct.setName(updateProduct.getName());

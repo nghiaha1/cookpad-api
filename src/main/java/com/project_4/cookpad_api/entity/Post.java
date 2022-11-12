@@ -1,11 +1,12 @@
 package com.project_4.cookpad_api.entity;
 
+import com.project_4.cookpad_api.entity.base.BaseEntity;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import lombok.*;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -15,24 +16,31 @@ import java.util.Set;
 @ToString
 @Entity
 @Table(name = "posts")
-public class Post {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @ManyToOne
-    @JoinColumn(name = "cate_id", referencedColumnName = "id", nullable = false)
-    private Category category;
+    @JoinColumn(name = "post_cate")
+    private PostCategory postCategory;
+
     private int eatNumber;
+
     private long cookingTime;
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
-    @ManyToOne
+
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "origin_id")
     private Origin origin;
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id", referencedColumnName = "id", nullable = false)
     private List<Ingredient> ingredient = new ArrayList<>();
+
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name = "making_id", referencedColumnName = "id", nullable = false)
     private List<Making> making = new ArrayList<>();

@@ -1,6 +1,6 @@
 package com.project_4.cookpad_api.api.admin;
 
-import com.project_4.cookpad_api.entity.Category;
+import com.project_4.cookpad_api.entity.ProductCategory;
 import com.project_4.cookpad_api.entity.myenum.Status;
 import com.project_4.cookpad_api.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +22,12 @@ public class CategoryAdminApi {
     CategoryService categoryService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Category>> findAll(){
+    public ResponseEntity<List<ProductCategory>> findAll(){
         return ResponseEntity.ok(categoryService.findAll());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "active")
-    public ResponseEntity<List<Category>> findAllByActive(){
+    public ResponseEntity<List<ProductCategory>> findAllByActive(){
         return ResponseEntity.ok(categoryService.findAll(Status.ACTIVE));
     }
 }

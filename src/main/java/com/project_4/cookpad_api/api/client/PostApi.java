@@ -61,7 +61,7 @@ public class PostApi {
         Post updatePost = optionalPost.get();
         // map object
         updatePost.setName(post.getName());
-        updatePost.setCategory(post.getCategory());
+        updatePost.setPostCategory(post.getPostCategory());
         updatePost.setUser(post.getUser());
         updatePost.setIngredient(post.getIngredient());
         updatePost.setMaking(post.getMaking());

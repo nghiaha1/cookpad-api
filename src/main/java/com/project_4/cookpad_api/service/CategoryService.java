@@ -1,8 +1,8 @@
 package com.project_4.cookpad_api.service;
 
-import com.project_4.cookpad_api.entity.Category;
+import com.project_4.cookpad_api.entity.ProductCategory;
 import com.project_4.cookpad_api.entity.myenum.Status;
-import com.project_4.cookpad_api.repository.CategoryRepository;
+import com.project_4.cookpad_api.repository.ProductCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,17 +16,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryService {
     @Autowired
-    CategoryRepository categoryRepository;
+    ProductCategoryRepository productCategoryRepository;
 
-    public List<Category> findAll(){
-        return categoryRepository.findAll();
+    public List<ProductCategory> findAll(){
+        return productCategoryRepository.findAll();
     }
 
-    public Optional<Category> findById(Long id){
-        return categoryRepository.findById(id);
+    public Optional<ProductCategory> findById(Long id){
+        return productCategoryRepository.findById(id);
     }
 
-    public List<Category> findAll(Status status){
-        return categoryRepository.findAllByStatus(status);
+    public List<ProductCategory> findAll(Status status){
+        return productCategoryRepository.findAllByStatus(status);
     }
 }
